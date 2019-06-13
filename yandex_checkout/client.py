@@ -14,13 +14,13 @@ from yandex_checkout.domain.exceptions.too_many_request_error import TooManyRequ
 from yandex_checkout.domain.exceptions.unauthorized_error import UnauthorizedError
 
 
-class ApiClient:
+class ApiClient(object):
     endpoint = Configuration.api_endpoint()
 
-    def __init__(self):
+    def __init__(self, shopid, secretkey):
         self.configuration = Configuration.instantiate()
-        self.shop_id = self.configuration.account_id
-        self.shop_password = self.configuration.secret_key
+        self.shop_id = shopid
+        self.shop_password = secretkey
         self.auth_token = self.configuration.auth_token
         self.timeout = self.configuration.timeout
         self.max_attempts = self.configuration.max_attempts
