@@ -11,11 +11,8 @@ from yandex_checkout.domain.response.payment_response import PaymentResponse
 class Payment:
     base_path = '/payments'
 
-    def __init__(self):
-        self.client = ApiClient()
-
     @classmethod
-    def find_one(cls, payment_id):
+    def find_one(cls, payment_id, client):
         """
         Get information about payment
 
@@ -27,11 +24,11 @@ class Payment:
             raise ValueError('Invalid payment_id value')
 
         path = instance.base_path + '/' + payment_id
-        response = instance.client.request(HttpVerb.GET, path)
+        response = client.request(HttpVerb.GET, path)
         return PaymentResponse(response)
 
     @classmethod
-    def create(cls, params, idempotency_key=None):
+    def create(cls, params, client, idempotency_key=None):
         """
         Create payment
 
@@ -56,11 +53,11 @@ class Payment:
         else:
             raise TypeError('Invalid params value type')
 
-        response = instance.client.request(HttpVerb.POST, path, None, headers, params_object)
+        response = client.request(HttpVerb.POST, path, None, headers, params_object)
         return PaymentResponse(response)
 
     @classmethod
-    def capture(cls, payment_id, params=None, idempotency_key=None):
+    def capture(cls, payment_id, client, params=None, idempotency_key=None):
         """
         Capture payment
 
@@ -89,11 +86,11 @@ class Payment:
         else:
             params_object = None
 
-        response = instance.client.request(HttpVerb.POST, path, None, headers, params_object)
+        response = client.request(HttpVerb.POST, path, None, headers, params_object)
         return PaymentResponse(response)
 
     @classmethod
-    def cancel(cls, payment_id, idempotency_key=None):
+    def cancel(cls, payment_id, client, idempotency_key=None):
         """
         Cancel payment
 
@@ -112,13 +109,13 @@ class Payment:
         headers = {
             'Idempotence-Key': str(idempotency_key)
         }
-        response = instance.client.request(HttpVerb.POST, path, None, headers)
+        response = client.request(HttpVerb.POST, path, None, headers)
         return PaymentResponse(response)
 
     @classmethod
-    def list(cls, params):
+    def list(cls, client, params):
         instance = cls()
         path = cls.base_path
 
-        response = instance.client.request(HttpVerb.GET, path, params)
+        response = client.request(HttpVerb.GET, path, params)
         return PaymentListResponse(response)
